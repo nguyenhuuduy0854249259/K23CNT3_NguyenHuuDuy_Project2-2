@@ -1,0 +1,202 @@
+﻿/* Sidebar */
+body {
+    min-height: 100vh;
+    display: flex;
+    transition: background 0.3s, color 0.3s;
+}
+
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    transition: background 0.3s, color 0.3s;
+}
+
+.sidebar a {
+    color: #adb5bd;
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+}
+
+.sidebar a:hover,
+.sidebar .active {
+    background: #495057;
+    color: #fff;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+    transition: background 0.3s, color 0.3s;
+}
+
+/* Dark/Light Mode chung */
+body.dark {
+    background: #1e1e2f;
+    color: #f1f1f1;
+}
+
+body.dark .sidebar {
+    background: #212529;
+}
+
+body.dark .sidebar a {
+    color: #dee2e6;
+}
+
+body.dark .sidebar a:hover,
+body.dark .sidebar .active {
+    background: #343a40;
+    color: #fff;
+}
+
+body.dark .content {
+    background: #2c3034;
+}
+
+body.dark .navbar {
+    background: #343a40 !important;
+}
+
+body.dark .navbar a,
+body.dark .navbar .navbar-brand {
+    color: #e9ecef !important;
+}
+
+body.dark input,
+body.dark select,
+body.dark textarea {
+    background: #495057;
+    color: #f8f9fa;
+    border: 1px solid #6c757d;
+}
+
+body.dark input:focus,
+body.dark select:focus,
+body.dark textarea:focus {
+    background: #6c757d;
+    border-color: #adb5bd;
+    color: #fff;
+}
+
+body.dark .btn-primary {
+    background: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Card thống kê */
+.stat-card {
+    transition: all 0.3s ease-in-out;
+    border-radius: 12px;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Table đồng bộ giá tiền */
+.table td.price-cell {
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+body:not(.dark) .table td.price-cell {
+    color: #198754;
+}
+
+body.dark .table td.price-cell {
+    color: #fff;
+}
+
+/* Transition toàn trang */
+body,
+.dashboard-page,
+.page-title,
+.card,
+.section-title,
+.table,
+.table-head,
+.stat-value,
+.price-cell {
+    transition: background-color 0.5s, color 0.5s;
+}
+
+/* Light mode */
+body:not(.dark) {
+    background-color: #f8f9fa;
+    color: #000;
+}
+
+body:not(.dark) .page-title {
+    color: #0d6efd;
+}
+
+body:not(.dark) .card {
+    background-color: #fff;
+    color: #000;
+}
+
+body:not(.dark) .card-header {
+    background-color: #f8f9fa;
+    color: #000;
+}
+
+body:not(.dark) .table-head {
+    background-color: #0d6efd !important;
+    color: #fff;
+}
+
+/* Dark mode */
+body.dark {
+    background-color: #1e1e2f;
+    color: #f1f1f1;
+}
+
+body.dark .page-title {
+    color: #ffd369;
+}
+
+body.dark .card {
+    background-color: #2b2b3c;
+    color: #f1f1f1;
+}
+
+body.dark .card-header {
+    background-color: #444;
+    color: #ffd369; /* đổi màu tiêu đề card */
+    font-weight: bold;
+}
+
+body.dark .section-title,
+body.dark h5,
+body.dark h4 {
+    color: #ffd369; /* đổi màu tiêu đề nhỏ */
+}
+
+body.dark .table-head {
+    background-color: #444 !important;
+    color: #fff;
+}
+
+body.dark .table td,
+body.dark .table th {
+    background-color: #2b2b3c;
+    color: #f1f1f1;
+}
+
+/* Modal xác nhận xóa */
+body.dark #confirmDeleteModal .modal-content {
+    background-color: #2b2b3c;
+    color: #f1f1f1;
+}
+
+body.dark #confirmDeleteModal .modal-header {
+    background-color: #dc3545; /* đỏ cảnh báo */
+    color: #fff;
+}
+
+body.dark #confirmDeleteModal .modal-body {
+    color: #ffd369; /* nội dung cảnh báo */
+}

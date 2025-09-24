@@ -1,0 +1,124 @@
+﻿@model IEnumerable<webBanSach.Models.Sach>
+
+@{
+    ViewData["Title"] = "Quản lý sách";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📚 Quản lý sách</h2>
+    <a asp-action="Create" class="btn btn-success">
+        ➕ Thêm sách mới
+    </a>
+</div>
+
+<table class="table table-hover align-middle shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th>Ảnh</th>
+            <th>Tên sách</th>
+            <th>NXB</th>
+            <th>Năm XB</th>
+            <th>Giá</th>
+            <th>Trạng thái</th>
+            <th style="width:180px">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <!-- Hình ảnh -->
+                <td style="width:100px">
+                    <img src="~/images/sach/@item.HinhAnh" alt="@item.TenSach"
+                         class="img-thumbnail" style="width:80px; height:80px; object-fit:cover;" />
+                </td>
+
+                <!-- Tên + mô tả -->
+                <td>
+                    <strong>@item.TenSach</strong><br />
+                    <span class="text-muted" style="font-size: 0.9em;">
+                        @if (!string.IsNullOrEmpty(item.MoTa))
+                        {
+                            @(item.MoTa.Length > 50 ? item.MoTa.Substring(0, 50) + "..." : item.MoTa)
+                        }
+                    </span>
+                </td>
+
+                <!-- Nhà xuất bản -->
+                <td>@item.MaNXBNavigation?.TenNXB</td>
+
+                <!-- Năm xuất bản -->
+                <td>@item.NamXB</td>
+
+                <!-- Giá -->
+                <td class="text-danger fw-bold">
+                    @string.Format("{0:N0} VNĐ", item.GiaBan)
+                </td>
+
+                <!-- Trạng thái -->
+                <td>
+                    @if (item.SoLuong > 0)
+                    {
+                        <span class="badge bg-success">Còn hàng</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Hết hàng</span>
+                    }
+                </td>
+
+                <!-- Thao tác -->
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.MaSach" class="btn btn-info btn-sm">Chi tiết</a>
+                    <a asp-action="Edit" asp-route-id="@item.MaSach" class="btn btn-warning btn-sm">Sửa</a>
+                    <button type="button" class="btn btn-danger btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#confirmDeleteModal"
+                            data-id="@item.MaSach"
+                            data-name="@item.TenSach">
+                        Xóa
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal xác nhận xóa -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <form id="deleteForm" method="post">
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa sách <strong id="deleteItemName"></strong>?
+                    <input type="hidden" name="id" id="deleteItemId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var deleteModal = document.getElementById('confirmDeleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var name = button.getAttribute('data-name');
+
+            document.getElementById('deleteItemName').textContent = name;
+            document.getElementById('deleteItemId').value = id;
+
+            // POST tới /Admin/Sach/Delete/{id}
+            document.getElementById('deleteForm').action = '/Admin/Sach/Delete/' + id;
+        });
+    </script>
+}

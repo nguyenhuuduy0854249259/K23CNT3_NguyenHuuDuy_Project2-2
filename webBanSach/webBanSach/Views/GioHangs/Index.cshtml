@@ -1,0 +1,60 @@
+﻿@model IEnumerable<webBanSach.Models.GioHang>
+
+@{
+    ViewData["Title"] = "Giỏ hàng của bạn";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Giỏ hàng của bạn</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            Giỏ hàng trống. <a asp-controller="Sach" asp-action="Index">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên sách</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Thành tiền</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="~/images/sach/@item.MaSachNavigation.HinhAnh"
+                                 alt="@item.MaSachNavigation.TenSach"
+                                 width="60" class="img-thumbnail" />
+                        </td>
+                        <td>@item.MaSachNavigation.TenSach</td>
+                        <td>@item.SoLuong</td>
+                        <td>@item.MaSachNavigation.GiaBan.ToString("N0") VNĐ</td>
+                        <td>@((item.SoLuong * item.MaSachNavigation.GiaBan).ToString("N0")) VNĐ</td>
+                        <td>
+                            <a asp-controller="GioHangs" asp-action="Xoa" asp-route-id="@item.MaSach"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Bạn có chắc muốn xóa?');">
+                                <i class="bi bi-trash"></i> Xóa
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="text-end">
+            <a asp-controller="ThanhToan" asp-action="Index" class="btn btn-success btn-lg">
+                <i class="bi bi-cash-stack"></i> Thanh toán
+            </a>
+        </div>
+    }
+</div>

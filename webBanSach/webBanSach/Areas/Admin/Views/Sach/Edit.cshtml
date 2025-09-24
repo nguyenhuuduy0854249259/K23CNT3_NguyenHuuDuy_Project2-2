@@ -1,0 +1,114 @@
+﻿@model webBanSach.ViewModels.SachViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa sách";
+}
+
+<div class="row">
+    <!-- Cột trái: form -->
+    <div class="col-md-8">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <input type="hidden" asp-for="MaSach" />
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light fw-bold">
+                    ✏️ Chỉnh sửa thông tin sách
+                </div>
+                <div class="card-body">
+                    <!-- Tên sách + NXB -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="TenSach" class="form-label">Tên sách</label>
+                            <input asp-for="TenSach" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nhà xuất bản</label>
+                            <select asp-for="MaNXB" class="form-select" asp-items="Model.NhaXuatBans">
+                                <option value="">-- Chọn NXB --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Giá + Số lượng -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="GiaBan" class="form-label">Giá bán (VNĐ)</label>
+                            <input asp-for="GiaBan" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="SoLuong" class="form-label">Số lượng</label>
+                            <input asp-for="SoLuong" class="form-control" />
+                        </div>
+                    </div>
+
+                    <!-- Năm XB -->
+                    <div class="mb-3">
+                        <label asp-for="NamXB" class="form-label">Năm xuất bản</label>
+                        <input asp-for="NamXB" class="form-control" />
+                    </div>
+
+                    <!-- Ảnh upload mới -->
+                    <div class="mb-3">
+                        <label class="form-label">Cập nhật ảnh bìa (nếu muốn)</label>
+                        <input asp-for="HinhAnhFile" type="file" class="form-control" />
+                    </div>
+
+                    <!-- Mô tả -->
+                    <div class="mb-3">
+                        <label asp-for="MoTa" class="form-label">Mô tả</label>
+                        <textarea asp-for="MoTa" class="form-control" rows="4"></textarea>
+                    </div>
+
+                    <!-- Tác giả -->
+                    <div class="mb-3">
+                        <label class="form-label">Tác giả</label>
+                        <select asp-for="SelectedTacGia" asp-items="Model.TacGias" class="form-select" multiple></select>
+                    </div>
+
+                    <!-- Thể loại -->
+                    <div class="mb-3">
+                        <label class="form-label">Thể loại</label>
+                        <select asp-for="SelectedTheLoai" asp-items="Model.TheLoais" class="form-select" multiple></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+                <button type="submit" class="btn btn-warning">💾 Cập nhật</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Cột phải: thông tin hiện tại -->
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light fw-bold">
+                📚 Thông tin hiện tại
+            </div>
+            <div class="card-body text-center">
+                <img src="~/images/sach/@Model.HinhAnh" alt="@Model.TenSach"
+                     class="img-fluid rounded mb-2" style="max-height:200px;object-fit:cover;" />
+                <p class="text-muted">@Model.HinhAnh</p>
+
+                <hr />
+
+                <p><strong>ID sách:</strong> #@Model.MaSach</p>
+                <p><strong>Giá bán:</strong> @string.Format("{0:N0} VNĐ", Model.GiaBan)</p>
+                <p>
+                    <strong>Mô tả:</strong>
+                    @(string.IsNullOrEmpty(Model.MoTa) ? "Chưa có mô tả" : Model.MoTa)
+                </p>
+                
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

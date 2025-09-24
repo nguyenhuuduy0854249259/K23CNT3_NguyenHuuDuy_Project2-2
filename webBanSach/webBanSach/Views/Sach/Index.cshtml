@@ -1,0 +1,89 @@
+﻿@model IEnumerable<webBanSach.Models.Sach>
+@{
+    ViewData["Title"] = "Danh sách Sách";
+}
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card book-card h-100">
+                <div class="book-img-wrapper">
+                    @if (!string.IsNullOrEmpty(item.HinhAnh))
+                    {
+                        <img src="~/images/sach/@item.HinhAnh" class="card-img-top" alt="@item.TenSach" />
+                    }
+                    else
+                    {
+                        <img src="~/images/no-image.png" class="card-img-top" alt="No image" />
+                    }
+                </div>
+                <div class="card-body text-center">
+                    <h6 class="card-title text-truncate fw-bold" title="@item.TenSach">@item.TenSach</h6>
+                    <p class="text-muted small mb-1">NXB: @item.MaNXBNavigation?.TenNXB</p>
+                    <p class="book-price">@string.Format("{0:N0} đ", item.GiaBan)</p>
+                </div>
+                <div class="card-footer d-flex justify-content-center gap-2">
+                    <a asp-action="Details" asp-route-id="@item.MaSach" class="btn btn-sm btn-outline-primary rounded-pill px-3">Chi tiết</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    /* Card sách */
+    .book-card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .book-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+    /* Ảnh sách */
+    .book-img-wrapper {
+        height: 250px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fafafa;
+    }
+
+        .book-img-wrapper img {
+            max-height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+    .book-card:hover img {
+        transform: scale(1.05);
+    }
+
+    /* Giá sách */
+    .book-price {
+        color: #e67e22;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+
+    /* Nút */
+    .card-footer {
+        background: #fff;
+        border-top: none;
+    }
+
+        .card-footer .btn {
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+            .card-footer .btn:hover {
+                opacity: 0.85;
+            }
+</style>

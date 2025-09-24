@@ -1,0 +1,169 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid dashboard-page">
+    <h2 class="mb-4 fw-bold page-title">📊 Dashboard</h2>
+
+    <!-- 4 box thống kê -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card text-center p-3 shadow-sm">
+                <h5 class="card-title">📚 Sách</h5>
+                <h3 class="stat-value">@ViewBag.TotalBooks</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card text-center p-3 shadow-sm">
+                <h5 class="card-title">👥 Người dùng</h5>
+                <h3 class="stat-value">@ViewBag.TotalUsers</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card text-center p-3 shadow-sm">
+                <h5 class="card-title">🛒 Đơn hàng</h5>
+                <h3 class="stat-value">@ViewBag.TotalOrders</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card text-center p-3 shadow-sm">
+                <h5 class="card-title">💵 Doanh thu</h5>
+                <h3 class="stat-value">@String.Format("{0:N0} đ", ViewBag.TotalRevenue)</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ doanh thu -->
+    <div class="card shadow-sm p-4 mb-4 chart-card rounded">
+        <h5 class="mb-3 fw-semibold section-title">📈 Doanh thu 6 tháng gần nhất</h5>
+        <canvas id="doanhThuChart" style="max-height:420px;"></canvas>
+    </div>
+
+    <!-- Bảng chi tiết -->
+    <div class="card shadow-sm p-4 table-card rounded">
+        <h5 class="mb-3 fw-semibold section-title">📋 Bảng thống kê chi tiết</h5>
+        <table class="table table-bordered table-striped mt-3 text-center align-middle">
+            <thead class="table-head">
+                <tr>
+                    <th>Tháng/Năm</th>
+                    <th>Doanh thu (VNĐ)</th>
+                </tr>
+            </thead>
+            <tbody id="doanhThuTable"></tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script>
+        const doanhThuData = @Html.Raw(ViewBag.DoanhThuTheoThang);
+        const ctx = document.getElementById('doanhThuChart').getContext('2d');
+
+        function isDarkMode() {
+            return document.body.classList.contains('dark');
+        }
+
+        function getGradient(ctx, dark) {
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, dark ? 'rgba(255,99,132,0.8)' : 'rgba(75,192,192,0.8)');
+            gradient.addColorStop(1, dark ? 'rgba(255,159,64,0.6)' : 'rgba(54,162,235,0.6)');
+            return gradient;
+        }
+
+        const labels = doanhThuData.map(d => `${d.Month}/${d.Year}`);
+        const dataValues = doanhThuData.map(d => d.TongDoanhThu);
+
+        let myChart = new Chart(ctx, {
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'Doanh thu (VNĐ)',
+                        data: dataValues,
+                        backgroundColor: getGradient(ctx, isDarkMode()),
+                        borderRadius: 10,
+                        order: 2
+                    },
+                    {
+                        type: 'line',
+                        label: 'Xu hướng',
+                        data: dataValues,
+                        borderColor: '#ff6384',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ff6384',
+                        pointRadius: 5,
+                        tension: 0.3,
+                        fill: false,
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: isDarkMode() ? '#fff' : '#000', font: { size: 14 } }
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'end',
+                        color: isDarkMode() ? '#fff' : '#000',
+                        font: { weight: 'bold', size: 12 },
+                        formatter: (val, ctx) => ctx.dataset.type === 'bar' ? val.toLocaleString('vi-VN') + ' ₫' : null
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.dataset.label}: ${ctx.raw.toLocaleString('vi-VN')} ₫`
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: isDarkMode() ? '#fff' : '#000', callback: val => val.toLocaleString('vi-VN') + ' ₫' } },
+                    x: { ticks: { color: isDarkMode() ? '#fff' : '#000' } }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        function renderTable() {
+            const tbody = document.getElementById("doanhThuTable");
+            tbody.innerHTML = "";
+            doanhThuData.forEach(d => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${d.Month}/${d.Year}</strong></td>
+                                                <td class="price-cell">${d.TongDoanhThu.toLocaleString('vi-VN')} ₫</td>`;
+                tbody.appendChild(tr);
+            });
+            updatePriceColor();
+        }
+
+        function updatePriceColor() {
+            document.querySelectorAll(".price-cell").forEach(td => {
+                td.style.color = isDarkMode() ? "#fff" : "#000";
+            });
+        }
+
+        function applyDarkMode() {
+            myChart.data.datasets[0].backgroundColor = getGradient(ctx, isDarkMode());
+            myChart.options.plugins.datalabels.color = isDarkMode() ? '#fff' : '#000';
+            myChart.options.scales.y.ticks.color = isDarkMode() ? '#fff' : '#000';
+            myChart.options.scales.x.ticks.color = isDarkMode() ? '#fff' : '#000';
+            myChart.options.plugins.legend.labels.color = isDarkMode() ? '#fff' : '#000';
+            myChart.update();
+
+            renderTable();
+        }
+
+        document.addEventListener("darkModeChanged", applyDarkMode);
+
+        window.onload = function () {
+            renderTable();
+            applyDarkMode();
+        };
+    </script>
+}

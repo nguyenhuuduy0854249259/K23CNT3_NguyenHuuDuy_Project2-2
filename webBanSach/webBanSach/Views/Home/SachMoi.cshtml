@@ -1,0 +1,57 @@
+﻿@model webBanSach.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Sản phẩm";
+}
+
+<h2 class="text-center">Sản phẩm nổi bật</h2>
+<hr />
+
+<div class="row">
+    @if (Model.SachNoiBat.Any())
+    {
+        foreach (var sach in Model.SachNoiBat)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm">
+                    <img src="~/images/@sach.HinhAnh" class="card-img-top" alt="@sach.TenSach" />
+                    <div class="card-body">
+                        <h5 class="card-title">@sach.TenSach</h5>
+                        <p class="card-text text-danger fw-bold">@sach.GiaBan.ToString("N0") đ</p>
+                        <a href="@Url.Action("Details", "Sach", new { id = sach.MaSach })" class="btn btn-primary">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-center">Không có sản phẩm nổi bật nào.</p>
+    }
+</div>
+
+<h2 class="text-center mt-5">Sản phẩm bán chạy</h2>
+<hr />
+
+<div class="row">
+    @if (Model.SachBanChay.Any())
+    {
+        foreach (var sach in Model.SachBanChay)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm">
+                    <img src="~/images/@sach.HinhAnh" class="card-img-top" alt="@sach.TenSach" />
+                    <div class="card-body">
+                        <h5 class="card-title">@sach.TenSach</h5>
+                        <p class="card-text text-danger fw-bold">@sach.GiaBan.ToString("N0") đ</p>
+                        <a href="@Url.Action("Details", "Sach", new { id = sach.MaSach })" class="btn btn-success">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-center">Chưa có sản phẩm bán chạy.</p>
+    }
+</div>

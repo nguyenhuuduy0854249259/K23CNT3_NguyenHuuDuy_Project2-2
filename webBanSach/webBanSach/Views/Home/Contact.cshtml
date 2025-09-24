@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<h2 class="mb-4">Liên hệ với chúng tôi</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Thông tin liên hệ</h4>
+        <ul class="list-unstyled">
+            <li><strong>Địa chỉ:</strong> 123 Đường ABC, Quận 1, TP.HCM</li>
+            <li><strong>Điện thoại:</strong> (0123) 456 789</li>
+            <li><strong>Email:</strong> support@yourshop.com</li>
+        </ul>
+    </div>
+
+    <div class="col-md-6">
+        <h4>Gửi phản hồi</h4>
+
+        @if (ViewBag.Success != null)
+        {
+            <div class="alert alert-success">
+                @ViewBag.Success
+            </div>
+        }
+
+        <form asp-action="Contact" method="post">
+            <div class="form-group mb-3">
+                <label for="Name">Họ và tên</label>
+                <input type="text" class="form-control" id="Name" name="Name" required />
+            </div>
+            <div class="form-group mb-3">
+                <label for="Email">Email</label>
+                <input type="email" class="form-control" id="Email" name="Email" required />
+            </div>
+            <div class="form-group mb-3">
+                <label for="Message">Nội dung</label>
+                <textarea class="form-control" id="Message" name="Message" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Gửi</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,138 @@
+﻿@model webBanSach.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Trang Chủ";
+}
+
+<div class="container mt-5">
+    <!-- PHẦN CHÀO MỪNG -->
+    <div class="text-center">
+        <h1 class="display-4 fw-bold text-primary">📚 Welcome to - Cửa hàng sách!</h1>
+        <p class="lead text-muted">Khám phá kho tàng tri thức với hàng ngàn đầu sách hấp dẫn.</p>
+
+        <!-- Nút điều hướng -->
+        <div class="mt-4">
+            <a href="/Sach/Index" class="btn btn-primary btn-lg me-2">
+                <i class="bi bi-book"></i> Xem sách
+            </a>
+            <a href="/Home/About" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-info-circle"></i> Giới thiệu !
+            </a>
+        </div>
+    </div>
+
+    <!-- BANNER + ƯU ĐÃI -->
+    <div class="card mt-5 shadow-lg border-0 rounded-3">
+        <div id="bookCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://img.freepik.com/free-photo/stack-books_144627-20260.jpg"
+                         class="d-block w-100 card-img-top" alt="Banner 1"
+                         style="height: 350px; object-fit: cover;">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://img.freepik.com/free-photo/books-on-wooden-table_144627-20123.jpg"
+                         class="d-block w-100 card-img-top" alt="Banner 2"
+                         style="height: 350px; object-fit: cover;">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://img.freepik.com/free-photo/open-book-with-glasses_144627-20232.jpg"
+                         class="d-block w-100 card-img-top" alt="Banner 3"
+                         style="height: 350px; object-fit: cover;">
+                </div>
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#bookCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#bookCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+
+        <div class="card-body text-center">
+            <h3 class="card-title text-dark fw-bold">Ưu đãi đặc biệt 🎉</h3>
+            <p class="card-text text-muted">
+                Giảm giá 30% cho tất cả các đầu sách trong tháng này.
+                Nhanh tay chọn cho mình những cuốn sách hay nhất!
+            </p>
+            <a href="/Sach/KhuyenMai" class="btn btn-success btn-lg">Mua ngay</a>
+        </div>
+    </div>
+
+    <!-- SECTION: SẢN PHẨM -->
+    <section id="san-pham-moi" class="my-5">
+        <h3 class="mb-3">📌 Sản phẩm</h3>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#noibat">🔥 Nổi bật</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#banchay">⭐ Bán chạy</a>
+            </li>
+        </ul>
+
+        <!-- Content -->
+        <div class="tab-content border p-3 bg-light">
+            <!-- NỔI BẬT -->
+            <div id="noibat" class="tab-pane fade show active">
+                <div class="row">
+                    @if (Model.SachNoiBat != null && Model.SachNoiBat.Any())
+                    {
+                        foreach (var sach in Model.SachNoiBat)
+                        {
+                            <div class="col-md-3 mb-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="@sach.HinhAnh" class="card-img-top" alt="@sach.TenSach" style="height: 200px; object-fit: cover;" />
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">@sach.TenSach</h5>
+                                        <p class="card-text text-danger fw-bold">@sach.GiaBan.ToString("N0") đ</p>
+                                        <a href="/Sach/Details/@sach.MaSach" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">👉 Hiện chưa có sách nổi bật.</p>
+                    }
+                </div>
+            </div>
+            <!-- BÁN CHẠY -->
+            <div id="banchay" class="tab-pane fade">
+                <div class="row">
+                    @if (Model.SachBanChay != null && Model.SachBanChay.Any())
+                    {
+                        foreach (var sach in Model.SachBanChay)
+                        {
+                            <div class="col-md-3 mb-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="@sach.HinhAnh" class="card-img-top" alt="@sach.TenSach" style="height: 200px; object-fit: cover;" />
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">@sach.TenSach</h5>
+                                        <p class="card-text text-danger fw-bold">@sach.GiaBan.ToString("N0") đ</p>
+                                        <span class="badge bg-success">
+                                            Đã bán: @(((Dictionary<int,int>)ViewBag.DaBan).ContainsKey(sach.MaSach)
+                                                                                ? ((Dictionary<int, int>)ViewBag.DaBan)[sach.MaSach]
+                                                                                : 0)
+                                </span>
+                                <br />
+                                <a href="/Sach/Details/@sach.MaSach" class="btn btn-outline-primary btn-sm mt-2">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">👉 Hiện chưa có sách bán chạy.</p>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
