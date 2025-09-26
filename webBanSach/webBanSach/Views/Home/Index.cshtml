@@ -56,7 +56,7 @@
                 Giảm giá 30% cho tất cả các đầu sách trong tháng này.
                 Nhanh tay chọn cho mình những cuốn sách hay nhất!
             </p>
-            <a href="/Sach/KhuyenMai" class="btn btn-success btn-lg">Mua ngay</a>
+            <a href="/Sach/ThanhToan" class="btn btn-success btn-lg">Mua ngay</a>
         </div>
     </div>
 
@@ -77,6 +77,11 @@
         <!-- Content -->
         <div class="tab-content border p-3 bg-light">
             <!-- NỔI BẬT -->
+            @{
+                var userId = Context.Session.GetInt32("MaND");
+            }
+
+            <!-- NỔI BẬT -->
             <div id="noibat" class="tab-pane fade show active">
                 <div class="row">
                     @if (Model.SachNoiBat != null && Model.SachNoiBat.Any())
@@ -89,7 +94,22 @@
                                     <div class="card-body text-center">
                                         <h5 class="card-title">@sach.TenSach</h5>
                                         <p class="card-text text-danger fw-bold">@sach.GiaBan.ToString("N0") đ</p>
-                                        <a href="/Sach/Details/@sach.MaSach" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                                        <div class="d-flex justify-content-center gap-2 mt-2">
+                                            <a href="/Sach/Details/@sach.MaSach" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-info-circle"></i> Xem chi tiết
+                                            </a>
+
+                                            @if (userId != null)
+                                            {
+                                                <form asp-controller="GioHang" asp-action="ThanhToan" method="post" class="d-inline">
+                                                    <input type="hidden" name="maSach" value="@sach.MaSach" />
+                                                    <input type="hidden" name="soLuong" value="1" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="bi bi-bag-check"></i> Mua ngay
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -101,6 +121,7 @@
                     }
                 </div>
             </div>
+
             <!-- BÁN CHẠY -->
             <div id="banchay" class="tab-pane fade">
                 <div class="row">
@@ -114,17 +135,33 @@
                                     <div class="card-body text-center">
                                         <h5 class="card-title">@sach.TenSach</h5>
                                         <p class="card-text text-danger fw-bold">@sach.GiaBan.ToString("N0") đ</p>
+
                                         <span class="badge bg-success">
                                             Đã bán: @(((Dictionary<int,int>)ViewBag.DaBan).ContainsKey(sach.MaSach)
                                                                                 ? ((Dictionary<int, int>)ViewBag.DaBan)[sach.MaSach]
                                                                                 : 0)
                                 </span>
-                                <br />
-                                <a href="/Sach/Details/@sach.MaSach" class="btn btn-outline-primary btn-sm mt-2">Xem chi tiết</a>
+
+                                        <div class="d-flex justify-content-center gap-2 mt-2">
+                                            <a href="/Sach/Details/@sach.MaSach" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-info-circle"></i> Xem chi tiết
+                                            </a>
+
+                                    @if (userId != null)
+                                            {
+                                                <form asp-controller="GioHang" asp-action="BuyNow" method="post" class="d-inline">
+                                                    <input type="hidden" name="maSach" value="@sach.MaSach" />
+                                                    <input type="hidden" name="soLuong" value="1" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="bi bi-bag-check"></i> Mua ngay
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                                        }
+                        }
                     }
                     else
                     {
@@ -132,6 +169,8 @@
                     }
                 </div>
             </div>
+        </div>
+
 
         </div>
     </section>

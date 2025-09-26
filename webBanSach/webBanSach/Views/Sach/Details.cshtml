@@ -5,36 +5,40 @@
     var userId = Context.Session.GetInt32("MaND"); // kiểm tra đã đăng nhập chưa
 }
 
-<div class="container mt-5">
-    <div class="row">
+<div class="container my-5">
+    <div class="row g-4">
         <!-- Ảnh sách -->
         <div class="col-md-4 text-center">
-            <img src="~/images/sach/@Model.HinhAnh"
-                 class="img-fluid rounded border"
-                 alt="@Model.TenSach"
-                 style="max-height:250px; object-fit:cover;" />
+            <div class="p-3 bg-white border rounded shadow-sm book-cover">
+                <img src="~/images/sach/@Model.HinhAnh"
+                     alt="@Model.TenSach"
+                     class="img-fluid rounded"
+                     style="max-height:300px; object-fit:cover;" />
+            </div>
         </div>
 
         <!-- Thông tin chi tiết -->
         <div class="col-md-8">
-            <h2 class="text-primary fw-bold">@Model.TenSach</h2>
-            <p class="text-muted">
+            <h2 class="fw-bold text-primary mb-2">@Model.TenSach</h2>
+            <p class="text-muted mb-1">
                 <i class="bi bi-eye"></i> @Model.LuotXem lượt xem
             </p>
-
-            <h4 class="text-danger fw-bold">
-                Giá: @Model.GiaBan.ToString("N0") VNĐ
+            <h4 class="text-danger fw-bold mb-3">
+                <i class="bi bi-tag"></i> @Model.GiaBan.ToString("N0") VNĐ
             </h4>
 
-            <p><strong>NXB:</strong> @Model.MaNXBNavigation?.TenNXB</p>
-            <p><strong>Năm xuất bản:</strong> @Model.NamXB</p>
-            <p><strong>Số lượng còn:</strong> @Model.SoLuong</p>
-            <p><strong>Mô tả:</strong> @Model.MoTa</p>
+            <ul class="list-unstyled mb-3">
+                <li><i class="bi bi-building"></i> <strong>NXB:</strong> @Model.MaNXBNavigation?.TenNXB</li>
+                <li><i class="bi bi-calendar"></i> <strong>Năm XB:</strong> @Model.NamXB</li>
+                <li><i class="bi bi-box-seam"></i> <strong>Số lượng còn:</strong> @Model.SoLuong</li>
+            </ul>
+
+            <p><i class="bi bi-file-earmark-text"></i> <strong>Mô tả:</strong> @Model.MoTa</p>
 
             <!-- Thể loại -->
             <p>
-                <strong>Thể loại:</strong>
-                @if (Model.Sach_TheLoais != null && Model.Sach_TheLoais.Any())
+                <i class="bi bi-collection"></i> <strong>Thể loại:</strong>
+                @if (Model.Sach_TheLoais?.Any() == true)
                 {
                     foreach (var tl in Model.Sach_TheLoais)
                     {
@@ -49,8 +53,8 @@
 
             <!-- Tác giả -->
             <p>
-                <strong>Tác giả:</strong>
-                @if (Model.Sach_TacGias != null && Model.Sach_TacGias.Any())
+                <i class="bi bi-person"></i> <strong>Tác giả:</strong>
+                @if (Model.Sach_TacGias?.Any() == true)
                 {
                     foreach (var tg in Model.Sach_TacGias)
                     {
@@ -63,32 +67,94 @@
                 }
             </p>
 
-            <!-- Nút thao tác -->
+            <!-- Đánh giá -->
             <div class="mt-4">
+                <h3 class="mb-3"><i class="bi bi-chat-dots"></i> Đánh giá sách</h3>
+
+                @if (userId != null)
+                {
+                    <form asp-action="AddDanhGia" method="post" class="p-3 border rounded shadow-sm bg-light">
+                        <input type="hidden" name="MaSach" value="@Model.MaSach" />
+
+                        <div class="mb-3">
+                            <label for="Diem" class="form-label">Chấm điểm</label>
+                            <select name="Diem" class="form-select">
+                                <option value="1">1 ⭐</option>
+                                <option value="2">2 ⭐⭐</option>
+                                <option value="3">3 ⭐⭐⭐</option>
+                                <option value="4">4 ⭐⭐⭐⭐</option>
+                                <option value="5">5 ⭐⭐⭐⭐⭐</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="BinhLuan" class="form-label">Bình luận</label>
+                            <textarea name="BinhLuan" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send"></i> Gửi đánh giá
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        Bạn cần <a asp-area="User" asp-controller="Account" asp-action="Login" class="fw-bold">đăng nhập</a> để gửi đánh giá.
+                    </div>
+                }
+
+                <!-- Danh sách đánh giá -->
+                <h4 class="mt-4">Các đánh giá</h4>
+                @if (Model.DanhGias?.Any() == true)
+                {
+                    <div class="list-group">
+                        @foreach (var dg in Model.DanhGias.OrderByDescending(d => d.NgayDG))
+                        {
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <strong>@dg.MaNDNavigation.HoTen</strong>
+                                    <span class="text-warning">@dg.Diem ⭐</span>
+                                </div>
+                                <p class="mb-1">@dg.BinhLuan</p>
+                                <small class="text-muted">
+                                    <i class="bi bi-clock"></i> @dg.NgayDG?.ToString("dd/MM/yyyy HH:mm")
+                                </small>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Chưa có đánh giá nào.</p>
+                }
+            </div>
+
+            <!-- Nút thao tác -->
+            <div class="mt-4 d-flex flex-wrap gap-2">
                 @if (userId == null)
                 {
-                    <!-- Nếu chưa đăng nhập -->
-                    <a asp-controller="Account" asp-action="Login"
-                       class="btn btn-warning btn-lg me-2">
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-warning btn-lg">
                         <i class="bi bi-box-arrow-in-right"></i> Đăng nhập để mua
                     </a>
                 }
                 else
                 {
-                    <!-- Nếu đã đăng nhập -->
-                    <form asp-controller="GioHangs" asp-action="ThemVaoGio" method="post" class="d-inline">
+                    <form asp-controller="GioHang" asp-action="AddToCart" method="post" class="d-inline">
                         <input type="hidden" name="maSach" value="@Model.MaSach" />
-                        <button type="submit" class="btn btn-success btn-lg me-2">
+                        <input type="hidden" name="soLuong" value="1" />
+                        <button type="submit" class="btn btn-success btn-lg">
                             <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
                         </button>
                     </form>
 
-                    <form asp-controller="GioHangs" asp-action="MuaNgay" method="post" class="d-inline">
+                    @* <form asp-controller="GioHang" asp-action="ThanhToan" method="post" class="d-inline">
                         <input type="hidden" name="maSach" value="@Model.MaSach" />
-                        <button type="submit" class="btn btn-danger btn-lg me-2">
+                        <input type="hidden" name="soLuong" value="1" />
+                        <button type="submit" class="btn btn-danger btn-lg">
                             <i class="bi bi-bag-check"></i> Mua ngay
                         </button>
-                    </form>
+                    </form> *@ 
                 }
 
                 <a href="@ViewBag.ReturnUrl" class="btn btn-secondary btn-lg">
@@ -98,3 +164,22 @@
         </div>
     </div>
 </div>
+
+<style>
+    .book-cover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .book-cover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+    .list-group-item {
+        transition: background-color 0.2s;
+    }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+</style>

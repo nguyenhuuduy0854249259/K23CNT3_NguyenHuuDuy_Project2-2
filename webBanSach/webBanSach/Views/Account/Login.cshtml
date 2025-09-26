@@ -8,17 +8,20 @@
 }
 
 <form asp-action="Login" method="post">
+    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
+    <!-- Email -->
     <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
+        <label>Email</label>
         <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
+    <!-- Mật khẩu -->
     <div class="mb-3">
-        <label asp-for="MatKhau" class="form-label"></label>
+        <label>Mật khẩu</label>
         <input asp-for="MatKhau" type="password" class="form-control" />
-        <span asp-validation-for="MatKhau" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+    <button type="submit" class="btn btn-primary">Đăng nhập</button>
 </form>
+

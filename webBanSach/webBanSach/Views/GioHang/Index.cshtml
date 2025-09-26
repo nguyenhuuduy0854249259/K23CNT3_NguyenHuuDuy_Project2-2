@@ -1,7 +1,76 @@
-﻿
+﻿@model IEnumerable<webBanSach.Models.GioHang>
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Giỏ hàng của bạn";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <h2 class="mb-4">🛒 Giỏ hàng của bạn</h2>
 
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            Giỏ hàng của bạn hiện đang trống.
+            <a asp-controller="Sach" asp-action="Index" class="btn btn-sm btn-primary ms-2">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên sách</th>
+                    <th width="180">Số lượng</th>
+                    <th>Giá</th>
+                    <th>Thành tiền</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="~/images/sach/@item.MaSachNavigation.HinhAnh"
+                                 alt="@item.MaSachNavigation.TenSach"
+                                 width="70" height="90"
+                                 class="rounded shadow-sm" />
+                        </td>
+                        <td>@item.MaSachNavigation.TenSach</td>
+                        <td>
+                            <form asp-controller="GioHang" asp-action="UpdateQuantity" method="post" class="d-flex">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="maSach" value="@item.MaSach" />
+                                <input type="number" name="soLuong" value="@item.SoLuong" min="1"
+                                       class="form-control form-control-sm me-2" style="width:70px;" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Cập nhật</button>
+                            </form>
+                        </td>
+                        <td>@item.MaSachNavigation.GiaBan.ToString("N0") VNĐ</td>
+                        <td>@((item.SoLuong * item.MaSachNavigation.GiaBan).ToString("N0")) VNĐ</td>
+                        <td>
+                            <form asp-controller="GioHang" asp-action="Remove" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="maSach" value="@item.MaSach" />
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="text-end mt-3">
+            <h4 class="text-success">
+                Tổng cộng:
+                @Model.Sum(x => x.SoLuong * x.MaSachNavigation.GiaBan).ToString("N0") VNĐ
+            </h4>
+            <a asp-controller="GioHang" asp-action="ThanhToan" class="btn btn-lg btn-success mt-2">
+                <i class="bi bi-credit-card"></i> Thanh toán
+            </a>
+        </div>
+    }
+</div>

@@ -1,0 +1,168 @@
+﻿@model IEnumerable<webBanSach.Models.GioHang>
+
+@{
+    ViewData["Title"] = "Thanh toán";
+    var total = Model.Sum(g => g.SoLuong * g.MaSachNavigation.GiaBan);
+}
+
+<div class="container mt-4 checkout-page">
+    <h2 class="text-center text-primary mb-4 animate-title">🛒 Thanh toán đơn hàng</h2>
+
+    <div class="row">
+        <!-- Cột trái: Thông tin giao hàng -->
+        <div class="col-md-7">
+            <div class="card shadow-sm mb-3 border-0 rounded-3">
+                <div class="card-header bg-light fw-bold border-0">
+                    Thông tin giao hàng
+                </div>
+                <div class="card-body">
+                    <form asp-action="ThanhToanConfirm" method="post" id="checkoutForm">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label">Họ tên người nhận</label>
+                            <input type="text" name="HoTen" class="form-control" placeholder="Nhập họ tên..." required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="Email" class="form-control" placeholder="Nhập email..." required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Địa chỉ giao hàng</label>
+                            <textarea name="DiaChi" class="form-control" rows="3" placeholder="Nhập địa chỉ chi tiết..." required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Phương thức thanh toán</label>
+                            <div class="form-check payment-option">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" value="COD" checked />
+                                <label class="form-check-label">💵 Thanh toán khi nhận hàng (COD)</label>
+                            </div>
+                            <div class="form-check payment-option">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" value="Bank" />
+                                <label class="form-check-label">🏦 Chuyển khoản ngân hàng</label>
+                            </div>
+                        </div>
+
+                        <!-- Nút hành động -->
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Quay lại giỏ hàng
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check2-circle"></i> Xác nhận đặt hàng
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột phải: Chi tiết đơn hàng -->
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-light fw-bold border-0">
+                    Chi tiết đơn hàng
+                </div>
+                <div class="card-body">
+                    @foreach (var item in Model)
+                    {
+                        <div class="d-flex justify-content-between mb-2 order-item">
+                            <span>@item.MaSachNavigation.TenSach (x @item.SoLuong)</span>
+                            <span>@(item.SoLuong* item.MaSachNavigation.GiaBan).ToString("N0") đ</span>
+                        </div>
+                    }
+
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <span>Phí giao hàng:</span>
+                        <span class="text-success">Miễn phí</span>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold mt-2">
+                        <span>Tổng cộng:</span>
+                        <span class="text-danger fs-5">@total.ToString("N0") VNĐ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS Custom -->
+<style>
+    .checkout-page {
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .animate-title {
+        animation: bounceIn 1s ease;
+    }
+
+    .payment-option {
+        transition: background-color 0.3s;
+        padding: 8px;
+        border-radius: 6px;
+        margin-bottom: 5px;
+    }
+
+        .payment-option:hover {
+            background: #f8f9fa;
+        }
+
+    .order-item {
+        transition: transform 0.2s;
+    }
+
+        .order-item:hover {
+            transform: scale(1.02);
+        }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+    @@keyframes bounceIn {
+        0%
+
+    {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    }
+</style>
+
+<!-- JS -->
+<script>
+    document.getElementById("checkoutForm").addEventListener("submit", function (e) {
+        if (!confirm("Bạn có chắc chắn muốn đặt hàng không?")) {
+            e.preventDefault();
+        }
+    });
+
+    // Highlight option khi chọn
+    const radios = document.querySelectorAll(".payment-option input");
+    radios.forEach(r => {
+        r.addEventListener("change", () => {
+            document.querySelectorAll(".payment-option").forEach(opt => opt.classList.remove("bg-light"));
+            r.closest(".payment-option").classList.add("bg-light");
+        });
+    });
+</script>

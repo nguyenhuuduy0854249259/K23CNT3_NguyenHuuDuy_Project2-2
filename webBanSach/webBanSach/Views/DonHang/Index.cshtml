@@ -1,0 +1,46 @@
+﻿@model IEnumerable<webBanSach.Models.DonHang>
+
+<div class="container mt-4">
+    <h2 class="text-primary">Danh sách đơn hàng của bạn</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info mt-3">
+            Bạn chưa có đơn hàng nào.
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Ngày đặt</th>
+                    <th>Địa chỉ giao</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>#@item.MaDH</td>
+                        <td>@item.NgayDat?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@item.DiaChiGiao</td>
+                        <td>@item.TongTien?.ToString("N0") VNĐ</td>
+                        <td>
+                            <span class="badge bg-warning text-dark">@item.TrangThai</span>
+                        </td>
+                        <td>
+                            <a asp-action="ChiTiet" asp-route-id="@item.MaDH" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

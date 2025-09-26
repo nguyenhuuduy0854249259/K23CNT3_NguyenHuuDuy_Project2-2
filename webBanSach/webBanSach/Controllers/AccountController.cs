@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using webBanSach.Models;
 using webBanSach.ViewModels;
 
@@ -16,16 +17,21 @@ namespace webBanSach.Areas.User.Controllers
 
         // GET: User/Account/Login
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl = null)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(LoginVM model)
+        public IActionResult Login(LoginVM model, string? returnUrl = null)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ReturnUrl = returnUrl;
+                return View(model);
+            }
 
             var user = _context.NguoiDungs
                 .FirstOrDefault(u => u.Email == model.Email
@@ -34,6 +40,7 @@ namespace webBanSach.Areas.User.Controllers
 
             if (user != null && BCrypt.Net.BCrypt.Verify(model.MatKhau, user.MatKhau))
             {
+                // ✅ Lưu session user
                 HttpContext.Session.SetInt32("MaND", user.MaND);
                 HttpContext.Session.SetString("UserName", user.HoTen ?? "User");
 
@@ -42,29 +49,43 @@ namespace webBanSach.Areas.User.Controllers
                     : $"/images/nguoidung/{user.HinhAnh}";
                 HttpContext.Session.SetString("UserAvatar", avatarPath);
 
-                return RedirectToAction("Index", "Home", new { area = "User" });
+                // ✅ Nếu có returnUrl thì chuyển về trang đó
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+
+                // Nếu không có returnUrl thì quay về Home
+                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.Error = "Email hoặc mật khẩu không đúng";
+            ViewBag.ReturnUrl = returnUrl;
             return View(model);
         }
 
         // GET: User/Account/Register
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register(string? returnUrl = null)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Register(RegisterVM model)
+        public IActionResult Register(RegisterVM model, string? returnUrl = null)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ReturnUrl = returnUrl;
+                return View(model);
+            }
 
             if (_context.NguoiDungs.Any(u => u.Email == model.Email))
             {
                 ViewBag.Error = "Email đã tồn tại.";
+                ViewBag.ReturnUrl = returnUrl;
                 return View(model);
             }
 
@@ -84,14 +105,17 @@ namespace webBanSach.Areas.User.Controllers
             _context.Add(user);
             _context.SaveChanges();
 
-            return RedirectToAction("Login");
+            // ✅ Sau khi đăng ký, điều hướng sang Login, giữ returnUrl
+            return RedirectToAction("Login", new { returnUrl });
         }
-
         // GET: User/Account/Logout
         public IActionResult Logout()
         {
+            // Xóa session
             HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+
+            // Sau khi đăng xuất → quay về trang chủ ngoài Area
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
     }
 }

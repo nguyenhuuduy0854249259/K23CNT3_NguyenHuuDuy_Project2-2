@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using webBanSach.Models;
 
 namespace webBanSach.ViewModels   // ✅ Namespace phải đúng
 {
@@ -33,5 +34,7 @@ namespace webBanSach.ViewModels   // ✅ Namespace phải đúng
         // Multiple select Thể loại
         public List<int>? SelectedTheLoai { get; set; }
         public IEnumerable<SelectListItem>? TheLoais { get; set; }
+        // Đánh giá
+        public List<DanhGia> DanhGias { get; set; } = new();
     }
 }

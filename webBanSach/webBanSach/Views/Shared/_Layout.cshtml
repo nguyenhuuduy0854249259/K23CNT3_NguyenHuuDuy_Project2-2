@@ -164,12 +164,19 @@
             <i class="bi bi-telephone-fill text-success"></i> Tư vấn: 028.73008182
         </div>
 
-        <div class="cart me-3">
-            <a asp-area="" asp-controller="GioHangs" asp-action="Index">
-                <i class="bi bi-cart-fill"></i> Giỏ hàng
-                <span class="badge bg-danger">@ViewBag.CartCount ?? 0</span>
-            </a>
-        </div>
+        <!-- Giỏ hàng: chỉ hiện khi user đã đăng nhập -->
+        @if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
+        {
+            <div class="cart me-3">
+                <a asp-area="User"
+                   asp-controller="GioHang"
+                   asp-action="Index"
+                   asp-route-returnUrl="@Context.Request.Path">
+                    <i class="bi bi-cart-fill"></i> Giỏ hàng
+                    <span class="badge bg-danger">@ViewBag.CartCount ?? 0</span>
+                </a>
+            </div>
+        }
 
         <!-- Đăng nhập / Đăng xuất -->
         <div class="d-flex align-items-center">
@@ -185,59 +192,63 @@
                 }
 
                 <span class="me-2 text-success">Xin chào, @userName</span>
-                <a asp-controller="Account" asp-action="Logout" class="btn btn-sm btn-outline-danger">Đăng xuất</a>
+                <a asp-area="User" asp-controller="Account" asp-action="Logout" class="btn btn-sm btn-outline-danger">Đăng xuất</a>
             }
             else
             {
-                <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-primary me-2">Đăng nhập</a>
-                <a asp-controller="Account" asp-action="Register" class="btn btn-sm btn-success">Đăng ký</a>
+                <a asp-area="User" asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-primary me-2">Đăng nhập</a>
+                <a asp-area="User" asp-controller="Account" asp-action="Register" class="btn btn-sm btn-success">Đăng ký</a>
             }
         </div>
-
     </header>
 
     <!-- BODY -->
     <div class="container-fluid d-flex mt-3">
-        <!-- SIDEBAR -->
-        <nav class="sidebar">
-            <h5 class="sidebar-title">Danh mục sản phẩm</h5>
-            <ul class="category-list">
-                <li>
-                    <a href="#">Sách Truyện <span class="float-end">▶</span></a>
-                    <ul class="submenu">
-                        <li><a asp-controller="Sach" asp-action="SearchByCategory" asp-route-theloai="Tiểu thuyết">Tiểu thuyết</a></li>
-                        <li><a asp-controller="Sach" asp-action="SearchByCategory" asp-route-theloai="Khoa học">Khoa học</a></li>
-                        <li><a asp-controller="Sach" asp-action="SearchByCategory" asp-route-theloai="Giáo khoa">Giáo khoa</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Sách theo tác giả <span class="float-end">▶</span></a>
-                    <ul class="submenu">
-                        <li><a asp-controller="Sach" asp-action="SearchByAuthor" asp-route-tacgia="Dale Carnegie">Dale Carnegie</a></li>
-                        <li><a asp-controller="Sach" asp-action="SearchByAuthor" asp-route-tacgia="Nguyễn Nhật Ánh">Nguyễn Nhật Ánh</a></li>
-                        <li><a asp-controller="Sach" asp-action="SearchByAuthor" asp-route-tacgia="NXB Văn Học">NXB Văn Học</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Sách theo NXB <span class="float-end">▶</span></a>
-                    <ul class="submenu">
-                        <li><a asp-controller="Sach" asp-action="SearchByPublisher" asp-route-nxb="NXB Trẻ">NXB Trẻ</a></li>
-                        <li><a asp-controller="Sach" asp-action="SearchByPublisher" asp-route-nxb="NXB Kim Đồng">NXB Kim Đồng</a></li>
-                        <li><a asp-controller="Sach" asp-action="SearchByPublisher" asp-route-nxb="NXB Văn Học">NXB Văn Học</a></li>
-                    </ul>
-                </li>
-                <li><a href="#">Sách Sale theo chủ đề</a></li>
-                <li><a href="#">Văn phòng phẩm (sắp có)</a></li>
-                <li><a href="#">Quà tặng (sắp có)</a></li>
-                <li><a href="#">Đồ chơi (sắp có)</a></li>
-                <li><a href="#">Blog sách hay (sắp có)</a></li>
-            </ul>
+        @* Ẩn sidebar nếu là trang Login hoặc Register *@
+        @if (!(ViewContext.RouteData.Values["action"]?.ToString() == "Login"
+                || ViewContext.RouteData.Values["action"]?.ToString() == "Register"))
+        {
+            <!-- SIDEBAR -->
+            <nav class="sidebar">
+                <h5 class="sidebar-title">Danh mục sản phẩm</h5>
+                <ul class="category-list">
+                    <li>
+                        <a href="#">Sách Truyện <span class="float-end">▶</span></a>
+                        <ul class="submenu">
+                            <li><a asp-controller="Sach" asp-action="SearchByCategory" asp-route-theloai="Tiểu thuyết">Tiểu thuyết</a></li>
+                            <li><a asp-controller="Sach" asp-action="SearchByCategory" asp-route-theloai="Khoa học">Khoa học</a></li>
+                            <li><a asp-controller="Sach" asp-action="SearchByCategory" asp-route-theloai="Giáo khoa">Giáo khoa</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">Sách theo tác giả <span class="float-end">▶</span></a>
+                        <ul class="submenu">
+                            <li><a asp-controller="Sach" asp-action="SearchByAuthor" asp-route-tacgia="Dale Carnegie">Dale Carnegie</a></li>
+                            <li><a asp-controller="Sach" asp-action="SearchByAuthor" asp-route-tacgia="Nguyễn Nhật Ánh">Nguyễn Nhật Ánh</a></li>
+                            <li><a asp-controller="Sach" asp-action="SearchByAuthor" asp-route-tacgia="NXB Văn Học">NXB Văn Học</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">Sách theo NXB <span class="float-end">▶</span></a>
+                        <ul class="submenu">
+                            <li><a asp-controller="Sach" asp-action="SearchByPublisher" asp-route-nxb="NXB Trẻ">NXB Trẻ</a></li>
+                            <li><a asp-controller="Sach" asp-action="SearchByPublisher" asp-route-nxb="NXB Kim Đồng">NXB Kim Đồng</a></li>
+                            <li><a asp-controller="Sach" asp-action="SearchByPublisher" asp-route-nxb="NXB Văn Học">NXB Văn Học</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Sách Sale theo chủ đề</a></li>
+                    <li><a href="#">Văn phòng phẩm (sắp có)</a></li>
+                    <li><a href="#">Quà tặng (sắp có)</a></li>
+                    <li><a href="#">Đồ chơi (sắp có)</a></li>
+                    <li><a href="#">Blog sách hay (sắp có)</a></li>
+                </ul>
 
-            <!-- Search in category -->
-            <div class="category-search">
-                <input type="text" class="form-control" placeholder="🔍 Tìm trong danh mục..." />
-            </div>
-        </nav>
+                <!-- Search in category -->
+                <div class="category-search">
+                    <input type="text" class="form-control" placeholder="🔍 Tìm trong danh mục..." />
+                </div>
+            </nav>
+        }
 
         <!-- MAIN CONTENT -->
         <div class="main-content">

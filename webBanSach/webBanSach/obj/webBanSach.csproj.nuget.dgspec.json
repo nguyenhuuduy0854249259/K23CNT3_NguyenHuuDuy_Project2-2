@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\project2 2\\webBanSach\\webBanSach\\webBanSach.csproj": {}
+    "D:\\project2 2\\K23CNT3_NguyenHuuDuy_Project2-2\\webBanSach\\webBanSach\\webBanSach.csproj": {}
   },
   "projects": {
-    "D:\\project2 2\\webBanSach\\webBanSach\\webBanSach.csproj": {
+    "D:\\project2 2\\K23CNT3_NguyenHuuDuy_Project2-2\\webBanSach\\webBanSach\\webBanSach.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\project2 2\\webBanSach\\webBanSach\\webBanSach.csproj",
+        "projectUniqueName": "D:\\project2 2\\K23CNT3_NguyenHuuDuy_Project2-2\\webBanSach\\webBanSach\\webBanSach.csproj",
         "projectName": "webBanSach",
-        "projectPath": "D:\\project2 2\\webBanSach\\webBanSach\\webBanSach.csproj",
+        "projectPath": "D:\\project2 2\\K23CNT3_NguyenHuuDuy_Project2-2\\webBanSach\\webBanSach\\webBanSach.csproj",
         "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-        "outputPath": "D:\\project2 2\\webBanSach\\webBanSach\\obj\\",
+        "outputPath": "D:\\project2 2\\K23CNT3_NguyenHuuDuy_Project2-2\\webBanSach\\webBanSach\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

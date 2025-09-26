@@ -130,6 +130,36 @@ namespace webBanSach.Controllers
             return View(sachTheoNXB);
         }
 
+        //đánh giá
+        public IActionResult AddDanhGia(DanhGiaVM model)
+        {
+            // kiểm tra đăng nhập
+            int? maND = HttpContext.Session.GetInt32("MaND");
+            if (maND == null)
+            {
+                return RedirectToAction("Login", "Account", new { area = "User", returnUrl = Url.Action("Details", new { id = model.MaSach }) });
+            }
+
+            if (ModelState.IsValid)
+            {
+                var dg = new DanhGia
+                {
+                    MaSach = model.MaSach,
+                    MaND = maND.Value,
+                    Diem = model.Diem,
+                    BinhLuan = model.BinhLuan,
+                    NgayDG = DateTime.Now
+                };
+
+                _context.DanhGias.Add(dg);
+                _context.SaveChanges();
+
+                return RedirectToAction("Details", new { id = model.MaSach });
+            }
+
+            return RedirectToAction("Details", new { id = model.MaSach });
+        }
+
         private bool SachExists(int id)
         {
             return _context.Saches.Any(e => e.MaSach == id);
